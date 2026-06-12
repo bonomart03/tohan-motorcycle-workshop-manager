@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: taller-tohan-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: COOKIE_MAX_AGE_MS
+        value: "28800000"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: COOKIE_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
