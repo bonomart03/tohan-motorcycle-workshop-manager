@@ -1,0 +1,26 @@
+version: "3.9"
+
+# Uso: docker-compose -f docker-compose.dev.yml up -d
+# Solo levanta PostgreSQL para desarrollo local.
+# El backend y frontend se corren con npm run dev directamente.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tohan_user
+      POSTGRES_PASSWORD: tohan_dev_password
+      POSTGRES_DB: taller_tohan
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tohan_user -d taller_tohan"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_dev_data:

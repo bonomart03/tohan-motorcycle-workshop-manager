@@ -1,0 +1,79 @@
+version: "3.9"
+
+# ✅ Red interna: la DB nunca es accesible desde el exterior
+networks:
+  tohan_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  nginx_certs:
+
+services:
+  # ─── Base de Datos ────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tohan_net
+    # ✅ Puerto NO expuesto al host en producción — solo interno
+    # expose: [5432]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Backend ──────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
+      PORT: 3001
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tohan_net
+    # ✅ No expone el puerto directamente — solo Nginx puede alcanzarlo
+    expose:
+      - "3001"
+
+  # ─── Frontend (build estático servido por Nginx) ──────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    networks:
+      - tohan_net
+    expose:
+      - "80"
+
+  # ─── Nginx reverse proxy ─────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_certs:/etc/letsencrypt:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - tohan_net

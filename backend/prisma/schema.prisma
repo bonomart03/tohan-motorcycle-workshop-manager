@@ -1,0 +1,101 @@
+// Taller Tohan — Prisma Schema
+// PostgreSQL + UUID keys + soft timestamps
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  ADMIN
+  MECANICO
+}
+
+enum EstadoServicio {
+  PENDIENTE
+  EN_PROCESO
+  COMPLETADO
+  ENTREGADO
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(255)
+  passwordHash  String    @map("password_hash") @db.VarChar(255)
+  nombre        String    @db.VarChar(100)
+  rol           Rol       @default(MECANICO)
+  activo        Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  servicios     Servicio[]
+
+  @@map("users")
+}
+
+model Cliente {
+  id             String    @id @default(uuid()) @db.Uuid
+  nombre         String    @db.VarChar(100)
+  apellido       String    @db.VarChar(100)
+  dni            String    @unique @db.VarChar(20)
+  domicilio      String    @db.Text
+  cedulaDigital  String?   @map("cedula_digital") @db.VarChar(255)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  vehiculos      Vehiculo[]
+
+  @@index([dni])
+  @@map("clientes")
+}
+
+model Vehiculo {
+  id          String    @id @default(uuid()) @db.Uuid
+  clienteId   String    @map("cliente_id") @db.Uuid
+  marca       String    @db.VarChar(100)
+  modelo      String    @db.VarChar(100)
+  dominio     String    @unique @db.VarChar(20)
+  nroChasis   String    @unique @map("nro_chasis") @db.VarChar(50)
+  nroCuadro   String    @unique @map("nro_cuadro") @db.VarChar(50)
+  kilometraje Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  cliente     Cliente   @relation(fields: [clienteId], references: [id])
+  servicios   Servicio[]
+
+  @@index([clienteId])
+  @@index([dominio])
+  @@map("vehiculos")
+}
+
+model Servicio {
+  id                  String         @id @default(uuid()) @db.Uuid
+  vehiculoId          String         @map("vehiculo_id") @db.Uuid
+  userId              String         @map("user_id") @db.Uuid
+  descripcion         String         @db.Text
+  diagnostico         String?        @db.Text
+  trabajosRealizados  String?        @map("trabajos_realizados") @db.Text
+  repuestosUtilizados String?        @map("repuestos_utilizados") @db.Text
+  costoManoObra       Decimal?       @map("costo_mano_obra") @db.Decimal(10, 2)
+  costoRepuestos      Decimal?       @map("costo_repuestos") @db.Decimal(10, 2)
+  estado              EstadoServicio @default(PENDIENTE)
+  kmIngreso           Int            @map("km_ingreso")
+  kmEgreso            Int?           @map("km_egreso")
+  fechaIngreso        DateTime       @default(now()) @map("fecha_ingreso") @db.Timestamptz
+  fechaSalida         DateTime?      @map("fecha_salida") @db.Timestamptz
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  vehiculo            Vehiculo       @relation(fields: [vehiculoId], references: [id])
+  mecanico            User           @relation(fields: [userId], references: [id])
+
+  @@index([vehiculoId])
+  @@index([estado])
+  @@index([fechaIngreso(sort: Desc)])
+  @@map("servicios")
+}

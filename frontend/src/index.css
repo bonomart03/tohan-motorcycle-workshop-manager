@@ -1,0 +1,223 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+  background: #f0f2f5;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+a {
+  color: inherit;
+}
+
+table {
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ─── Layout ──────────────────────────────────────────────────────────────── */
+
+.page-content {
+  padding: 2rem;
+}
+
+/* ─── Tablas responsive ───────────────────────────────────────────────────── */
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll table {
+  min-width: 560px;
+}
+
+/* ─── Grids responsive ────────────────────────────────────────────────────── */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 1.5rem;
+}
+
+/* ─── Mobile topbar ───────────────────────────────────────────────────────── */
+
+.mobile-topbar {
+  display: none;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.hamburger-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* ─── Sidebar backdrop (mobile) ───────────────────────────────────────────── */
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+/* ─── Print ───────────────────────────────────────────────────────────────── */
+
+@media print {
+  aside,
+  .no-print {
+    display: none !important;
+  }
+
+  body, main {
+    background: #fff !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+
+  .print-header {
+    display: block !important;
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.print-header {
+  display: none;
+}
+
+/* ─── Mobile ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+
+  /* Topbar */
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background: #1a1a2e;
+    padding: 0 1rem;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* Sidebar: overlay desde la izquierda */
+  aside {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    padding-top: 1.5rem !important;
+  }
+
+  aside.sidebar-mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+  }
+
+  /* Backdrop visible en mobile */
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  /* Main: empujar abajo del topbar */
+  main {
+    padding-top: 52px;
+  }
+
+  /* Padding de páginas más ajustado */
+  .page-content {
+    padding: 1rem;
+  }
+
+  /* Grids → columna única */
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-4 {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+  }
+
+  /* Tablas: min-width más chico en mobile */
+  .table-scroll table {
+    min-width: 480px;
+  }
+
+  /* Botones touch-friendly */
+  button {
+    min-height: 40px;
+  }
+
+  /* Filtros de fecha en columna */
+  .filters-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Separador vertical → oculto en mobile */
+  .filters-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
