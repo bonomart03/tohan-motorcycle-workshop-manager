@@ -91,7 +91,7 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
       style={{
         width: 220,
         minHeight: "100vh",
-        background: "#1a1a2e",
+        background: "#0e1311",
         color: "#eee",
         display: "flex",
         flexDirection: "column",
@@ -100,19 +100,19 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
       }}
     >
       {/* Logo */}
-      <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid #2a2a4a" }}>
+      <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600, color: "#fff", fontFamily: "'Schibsted Grotesk', sans-serif", letterSpacing: "-0.5px" }}>
           Taller Tohan
         </h1>
         {user && (
-          <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: "#7f8c8d", fontFamily: "'Schibsted Grotesk', sans-serif" }}>
+          <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", fontFamily: "'Schibsted Grotesk', sans-serif" }}>
             {user.nombre} · {user.rol}
           </p>
         )}
       </div>
 
       {/* Navegación principal */}
-      <nav style={{ flex: 1, paddingTop: "0.75rem" }}>
+      <nav style={{ flex: 1, paddingTop: "0.5rem" }}>
         {NAV_ITEMS.map(({ to, label, exact }) => (
           <NavLink
             key={to}
@@ -121,12 +121,14 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
             onClick={onClose}
             style={({ isActive }) => ({
               display: "block",
-              padding: "0.7rem 1.5rem",
-              color: isActive ? "#00d4ff" : "#b2bec3",
+              padding: "0.65rem 1.5rem",
+              color: isActive ? "#fff" : "rgba(255,255,255,0.45)",
               textDecoration: "none",
-              background: isActive ? "rgba(0,212,255,0.08)" : "transparent",
-              borderLeft: `3px solid ${isActive ? "#00d4ff" : "transparent"}`,
-              fontSize: "0.92rem",
+              background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+              borderLeft: `3px solid ${isActive ? "#fff" : "transparent"}`,
+              fontSize: "0.9rem",
+              fontFamily: "'Schibsted Grotesk', sans-serif",
+              fontWeight: isActive ? 600 : 400,
               transition: "all 0.12s",
             })}
           >
@@ -137,7 +139,7 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
         {/* Sección admin */}
         {isAdmin && (
           <>
-            <div style={{ padding: "1rem 1.5rem 0.4rem", fontSize: "0.7rem", color: "#636e72", textTransform: "uppercase", letterSpacing: 1 }}>
+            <div style={{ padding: "1rem 1.5rem 0.4rem", fontSize: "0.68rem", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", letterSpacing: 1.5, fontFamily: "'Schibsted Grotesk', sans-serif" }}>
               Administración
             </div>
             {ADMIN_ITEMS.map(({ to, label }) => (
@@ -147,12 +149,14 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
                 onClick={onClose}
                 style={({ isActive }) => ({
                   display: "block",
-                  padding: "0.7rem 1.5rem",
-                  color: isActive ? "#00d4ff" : "#b2bec3",
+                  padding: "0.65rem 1.5rem",
+                  color: isActive ? "#fff" : "rgba(255,255,255,0.45)",
                   textDecoration: "none",
-                  background: isActive ? "rgba(0,212,255,0.08)" : "transparent",
-                  borderLeft: `3px solid ${isActive ? "#00d4ff" : "transparent"}`,
-                  fontSize: "0.92rem",
+                  background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+                  borderLeft: `3px solid ${isActive ? "#fff" : "transparent"}`,
+                  fontSize: "0.9rem",
+                  fontFamily: "'Schibsted Grotesk', sans-serif",
+                  fontWeight: isActive ? 600 : 400,
                   transition: "all 0.12s",
                 })}
               >
@@ -164,19 +168,20 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
       </nav>
 
       {/* Cambiar contraseña + Logout */}
-      <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #2a2a4a" }}>
+      <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <button
           onClick={() => setPwModalOpen(true)}
           style={{
             width: "100%",
-            padding: "0.5rem",
+            padding: "0.55rem",
             background: "transparent",
-            color: "#7f8c8d",
-            border: "1px solid #2a2a4a",
-            borderRadius: 4,
+            color: "rgba(255,255,255,0.35)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 8,
             cursor: "pointer",
             fontSize: "0.82rem",
             marginBottom: "0.5rem",
+            fontFamily: "'Schibsted Grotesk', sans-serif",
           }}
         >
           Cambiar contraseña
@@ -186,12 +191,14 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
           style={{
             width: "100%",
             padding: "0.6rem",
-            background: "transparent",
+            background: "rgba(231,76,60,0.1)",
             color: "#e74c3c",
-            border: "1px solid #e74c3c",
-            borderRadius: 4,
+            border: "1px solid rgba(231,76,60,0.25)",
+            borderRadius: 8,
             cursor: "pointer",
             fontSize: "0.88rem",
+            fontFamily: "'Schibsted Grotesk', sans-serif",
+            fontWeight: 500,
           }}
         >
           Cerrar sesión
@@ -199,29 +206,14 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
       </div>
 
       {/* Footer Bonomart */}
-      <div style={{ padding: "0.9rem 1.5rem", borderTop: "1px solid #2a2a4a", textAlign: "center" }}>
-        <p style={{ margin: 0, fontSize: "0.68rem", color: "#4a4a6a" }}>Developed by</p>
-        <p style={{ margin: "0.1rem 0 0.5rem", fontSize: "0.8rem", fontWeight: 700, color: "#636e72", letterSpacing: 0.5 }}>
-          Bonomart
+      <div style={{ padding: "0.9rem 1.5rem", borderTop: "1px solid rgba(255,255,255,0.07)", textAlign: "center" }}>
+        <p style={{ margin: "0 0 0.3rem", fontSize: "0.68rem", color: "rgba(255,255,255,0.2)", fontFamily: "'Schibsted Grotesk', sans-serif" }}>
+          Developed by{" "}
+          <a href="https://www.linkedin.com/in/bono-martinez-8b638227a" target="_blank" rel="noopener noreferrer"
+            style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", fontWeight: 600 }}>
+            Bonomart
+          </a>
         </p>
-        <div style={{ display: "flex", justifyContent: "center", gap: "0.9rem" }}>
-          <a
-            href="https://www.linkedin.com/in/bono-martinez-8b638227a"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "0.72rem", color: "#4a9eff", textDecoration: "none" }}
-          >
-            LinkedIn
-          </a>
-          <a
-            href="https://github.com/bonomart03"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "0.72rem", color: "#4a9eff", textDecoration: "none" }}
-          >
-            GitHub
-          </a>
-        </div>
       </div>
 
       {/* Modal cambiar contraseña */}

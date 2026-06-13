@@ -46,7 +46,7 @@ function AppLayout() {
 
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      <main style={{ flex: 1, background: "#f0f2f5", overflow: "auto" }}>
+      <main style={{ flex: 1, background: "#f5f5f5", overflow: "auto" }}>
         <Suspense fallback={<div style={{ padding: "2rem", color: "#888" }}>Cargando...</div>}>
           <Routes>
             <Route index element={<DashboardPage />} />
