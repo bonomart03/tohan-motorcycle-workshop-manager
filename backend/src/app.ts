@@ -41,9 +41,9 @@ app.use(
 );
 
 // ─── Parsers ──────────────────────────────────────────────────────────────────
-// ✅ Limita el tamaño del payload a 10kb (anti billing-bomb / DoS)
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+// 2mb para soportar foto de cédula en base64; demás endpoints siguen protegidos por rate limiting y auth
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // ─── Logging HTTP ─────────────────────────────────────────────────────────────

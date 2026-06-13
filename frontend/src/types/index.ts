@@ -30,6 +30,7 @@ export interface Cliente {
   dni: string;
   domicilio: string;
   cedulaDigital?: string;
+  cedulaFoto?: string | null;
   createdAt: string;
   updatedAt: string;
   vehiculos?: VehiculoResumen[];

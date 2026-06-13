@@ -48,6 +48,7 @@ export class ClienteService {
       where: { id },
       select: {
         ...clienteSelect,
+        cedulaFoto: true,
         vehiculos: {
           select: {
             id: true,

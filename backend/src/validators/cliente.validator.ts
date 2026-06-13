@@ -23,6 +23,11 @@ export const createClienteSchema = z.object({
     .max(500)
     .trim(),
   cedulaDigital: z.string().max(255).trim().optional(),
+  cedulaFoto: z
+    .string()
+    .regex(/^data:image\//, "Formato de imagen inválido")
+    .nullable()
+    .optional(),
 });
 
 export const updateClienteSchema = createClienteSchema.partial();

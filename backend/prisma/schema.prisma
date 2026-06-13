@@ -44,6 +44,7 @@ model Cliente {
   dni            String    @unique @db.VarChar(20)
   domicilio      String    @db.Text
   cedulaDigital  String?   @map("cedula_digital") @db.VarChar(255)
+  cedulaFoto     String?   @map("cedula_foto") @db.Text
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 

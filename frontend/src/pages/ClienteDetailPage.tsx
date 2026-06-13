@@ -90,6 +90,21 @@ export default function ClienteDetailPage() {
         </div>
       </div>
 
+      {/* Foto cédula */}
+      {cliente.cedulaFoto && (
+        <div style={{ background: "#fff", borderRadius: 14, padding: "1.25rem 1.5rem", marginBottom: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
+          <span style={{ fontSize: "0.78rem", color: "#888", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: "0.75rem" }}>Foto de cédula</span>
+          <a href={cliente.cedulaFoto} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block" }}>
+            <img
+              src={cliente.cedulaFoto}
+              alt="Cédula de identidad"
+              style={{ maxWidth: "100%", maxHeight: 280, borderRadius: 8, objectFit: "contain", display: "block", cursor: "zoom-in", border: "1px solid rgba(0,0,0,0.08)" }}
+            />
+          </a>
+          <p style={{ margin: "0.5rem 0 0", fontSize: "0.8rem", color: "#aaa" }}>Tocá la imagen para verla completa</p>
+        </div>
+      )}
+
       {/* Sin vehículos */}
       {(!cliente.vehiculos || cliente.vehiculos.length === 0) && (
         <div style={{ background: "#fff", borderRadius: 14, padding: "2rem", textAlign: "center", color: "#888", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
