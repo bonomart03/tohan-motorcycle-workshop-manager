@@ -125,12 +125,11 @@ export default function LoginPage() {
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "16px 120px",
         }}>
-          <span style={{
-            fontFamily: "'Schibsted Grotesk', sans-serif",
-            fontSize: 24, fontWeight: 600, letterSpacing: "-1.44px", color: "#000",
-          }}>
-            Taller Tohan
-          </span>
+          <img
+            src="/logo.jpeg"
+            alt="Taller Tohan"
+            style={{ height: 48, mixBlendMode: "screen" }}
+          />
           <span style={{
             fontFamily: "'Schibsted Grotesk', sans-serif",
             fontSize: 13, color: "rgba(0,0,0,0.4)", fontWeight: 500,
@@ -165,7 +164,7 @@ export default function LoginPage() {
                   <path d="M6 1L7.35 4.65H11L8.1 6.85L9.18 10.5L6 8.4L2.82 10.5L3.9 6.85L1 4.65H4.65L6 1Z" fill="white"/>
                 </svg>
                 <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 500 }}>
-                  Bienvenido
+                  Bienvenido Iancito Tohan
                 </span>
               </div>
               <span style={{

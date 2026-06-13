@@ -101,9 +101,7 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
     >
       {/* Logo */}
       <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-        <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600, color: "#fff", fontFamily: "'Schibsted Grotesk', sans-serif", letterSpacing: "-0.5px" }}>
-          Taller Tohan
-        </h1>
+        <img src="/logo.jpeg" alt="Taller Tohan" style={{ height: 56, mixBlendMode: "screen", display: "block" }} />
         {user && (
           <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", fontFamily: "'Schibsted Grotesk', sans-serif" }}>
             {user.nombre} · {user.rol}
