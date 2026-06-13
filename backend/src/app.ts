@@ -28,8 +28,13 @@ app.use(
 // ─── CORS: solo el frontend autorizado puede consumir la API ─────────────────
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
-    credentials: true, // necesario para enviar/recibir cookies
+    origin: (origin, callback) => {
+      const allowed = process.env.FRONTEND_URL ?? "http://localhost:5173";
+      // Sin Origin = request del proxy de Vercel (server-to-server) o herramienta interna
+      if (!origin || origin === allowed) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })

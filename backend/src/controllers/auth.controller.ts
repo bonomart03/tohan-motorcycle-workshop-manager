@@ -8,7 +8,8 @@ const COOKIE_OPTIONS = {
   secure: IS_PROD,
   // SameSite=none requerido cuando frontend y backend están en dominios distintos (Vercel ≠ Render).
   // SameSite=none exige Secure=true — solo aplica en producción HTTPS.
-  sameSite: (IS_PROD ? "none" : "strict") as "none" | "strict",
+  // Con el proxy de Vercel las cookies son same-site: lax es suficiente y más seguro
+  sameSite: (IS_PROD ? "lax" : "strict") as "lax" | "strict",
   maxAge: parseInt(process.env.COOKIE_MAX_AGE_MS ?? "28800000"),
   path: "/",
 };
