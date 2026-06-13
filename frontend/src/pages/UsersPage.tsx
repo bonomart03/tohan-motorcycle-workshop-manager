@@ -76,7 +76,7 @@ export default function UsersPage() {
         <h2 style={{ margin: 0 }}>Gestión de Usuarios</h2>
         <button
           onClick={() => setModalOpen(true)}
-          style={{ padding: "0.6rem 1.2rem", background: "#2980b9", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: 500 }}
+          className="btn-primary"
         >
           + Nuevo usuario
         </button>
@@ -84,7 +84,7 @@ export default function UsersPage() {
 
       {isLoading && <p style={{ color: "#888" }}>Cargando usuarios...</p>}
 
-      <div className="table-scroll" style={{ background: "#fff", borderRadius: 6, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+      <div className="table-scroll" style={{ background: "#fff", borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#f8f9fa" }}>
@@ -105,7 +105,7 @@ export default function UsersPage() {
                     padding: "0.2rem 0.6rem",
                     borderRadius: 12,
                     background: u.rol === "ADMIN" ? "#fdf2e9" : "#eaf4fb",
-                    color: u.rol === "ADMIN" ? "#e67e22" : "#2980b9",
+                    color: u.rol === "ADMIN" ? "#e67e22" : "#555",
                     fontWeight: 600,
                     fontSize: "0.8rem",
                   }}>
@@ -131,8 +131,8 @@ export default function UsersPage() {
                       onClick={() => toggleMutation.mutate({ id: u.id, activo: !u.activo })}
                       style={{
                         padding: "0.3rem 0.7rem",
-                        border: `1px solid ${u.activo ? "#c0392b" : "#27ae60"}`,
-                        borderRadius: 4,
+                        border: `1px solid ${u.activo ? "#e0b0b0" : "#b0d8b0"}`,
+                        borderRadius: 8,
                         color: u.activo ? "#c0392b" : "#27ae60",
                         background: "#fff",
                         cursor: "pointer",
@@ -177,16 +177,16 @@ export default function UsersPage() {
           </FormField>
 
           {createMutation.error && (
-            <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.6rem 0.75rem", borderRadius: 4, marginBottom: "0.75rem", fontSize: "0.88rem" }}>
+            <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.6rem 0.75rem", borderRadius: 10, marginBottom: "0.75rem", fontSize: "0.88rem" }}>
               {(createMutation.error as any)?.response?.data?.message ?? "Error al crear usuario."}
             </div>
           )}
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.5rem" }}>
-            <button type="button" onClick={() => { setModalOpen(false); reset(); }} style={{ padding: "0.55rem 1.1rem", border: "1px solid #ccc", borderRadius: 4, background: "#fff", cursor: "pointer" }}>
+            <button type="button" onClick={() => { setModalOpen(false); reset(); }} style={{ padding: "0.55rem 1.1rem", border: "1px solid #ccc", borderRadius: 10, background: "#fff", cursor: "pointer" }}>
               Cancelar
             </button>
-            <button type="submit" disabled={isSubmitting} style={{ padding: "0.55rem 1.2rem", background: isSubmitting ? "#95a5a6" : "#2980b9", color: "#fff", border: "none", borderRadius: 4, cursor: isSubmitting ? "not-allowed" : "pointer" }}>
+            <button type="submit" disabled={isSubmitting} style={{ padding: "0.55rem 1.2rem", background: isSubmitting ? "#95a5a6" : "#000", color: "#fff", border: "none", borderRadius: 10, cursor: isSubmitting ? "not-allowed" : "pointer", fontWeight: 600 }}>
               {isSubmitting ? "Creando..." : "Crear usuario"}
             </button>
           </div>

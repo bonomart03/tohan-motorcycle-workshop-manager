@@ -37,7 +37,7 @@ const ESTADO_LABEL: Record<EstadoServicio, string> = {
 // ─── Utilidades UI ────────────────────────────────────────────────────────────
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: "#fff", borderRadius: 6, padding: "1.5rem", marginBottom: "1.25rem", boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+    <div style={{ background: "#fff", borderRadius: 14, padding: "1.5rem", marginBottom: "1.25rem", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
       <h4 style={{ margin: "0 0 1rem", color: "#333", borderBottom: "1px solid #f0f0f0", paddingBottom: "0.6rem" }}>
         {title}
       </h4>
@@ -149,7 +149,7 @@ export default function ServicioDetailPage() {
         <button
           className="no-print"
           onClick={() => navigate(-1)}
-          style={{ padding: "0.4rem 0.8rem", border: "1px solid #ccc", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: "0.9rem" }}
+          style={{ padding: "0.4rem 0.8rem", border: "1px solid #ccc", borderRadius: 8, background: "#fff", cursor: "pointer", fontSize: "0.9rem" }}
         >
           ← Volver
         </button>
@@ -174,7 +174,7 @@ export default function ServicioDetailPage() {
             className="no-print"
             onClick={advanceEstado}
             disabled={updateMutation.isPending}
-            style={{ padding: "0.4rem 0.9rem", border: "none", borderRadius: 4, background: "#27ae60", color: "#fff", cursor: "pointer", fontWeight: 500 }}
+            style={{ padding: "0.4rem 0.9rem", border: "none", borderRadius: 8, background: "#27ae60", color: "#fff", cursor: "pointer", fontWeight: 500 }}
           >
             {updateMutation.isPending ? "..." : `→ Marcar ${ESTADO_LABEL[{ PENDIENTE: "EN_PROCESO", EN_PROCESO: "COMPLETADO", COMPLETADO: "ENTREGADO", ENTREGADO: "ENTREGADO" }[servicio.estado] as EstadoServicio]}`}
           </button>
@@ -182,7 +182,7 @@ export default function ServicioDetailPage() {
         <button
           className="no-print"
           onClick={() => window.print()}
-          style={{ padding: "0.4rem 0.9rem", border: "1px solid #555", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: "0.9rem", color: "#333" }}
+          style={{ padding: "0.4rem 0.9rem", border: "1px solid #ccc", borderRadius: 8, background: "#fff", cursor: "pointer", fontSize: "0.9rem", color: "#333" }}
         >
           Imprimir
         </button>
@@ -300,12 +300,12 @@ export default function ServicioDetailPage() {
 
         {/* Feedback y botón */}
         {updateMutation.error && (
-          <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 4, marginBottom: "1rem" }}>
+          <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 10, marginBottom: "1rem" }}>
             {(updateMutation.error as any)?.response?.data?.message ?? "Error al guardar."}
           </div>
         )}
         {saveSuccess && (
-          <div style={{ background: "#d5f5e3", color: "#196f3d", padding: "0.75rem 1rem", borderRadius: 4, marginBottom: "1rem" }}>
+          <div style={{ background: "#d5f5e3", color: "#196f3d", padding: "0.75rem 1rem", borderRadius: 10, marginBottom: "1rem" }}>
             Cambios guardados correctamente.
           </div>
         )}
@@ -315,14 +315,14 @@ export default function ServicioDetailPage() {
             type="button"
             onClick={() => reset()}
             disabled={!isDirty || isSubmitting}
-            style={{ padding: "0.6rem 1.1rem", border: "1px solid #ccc", borderRadius: 4, background: "#fff", cursor: isDirty ? "pointer" : "not-allowed", opacity: isDirty ? 1 : 0.5 }}
+            style={{ padding: "0.6rem 1.1rem", border: "1px solid #ccc", borderRadius: 10, background: "#fff", cursor: isDirty ? "pointer" : "not-allowed", opacity: isDirty ? 1 : 0.5 }}
           >
             Descartar cambios
           </button>
           <button
             type="submit"
             disabled={!isDirty || isSubmitting}
-            style={{ padding: "0.6rem 1.4rem", background: !isDirty || isSubmitting ? "#95a5a6" : "#2980b9", color: "#fff", border: "none", borderRadius: 4, cursor: !isDirty || isSubmitting ? "not-allowed" : "pointer", fontWeight: 500 }}
+            style={{ padding: "0.6rem 1.4rem", background: !isDirty || isSubmitting ? "#95a5a6" : "#000", color: "#fff", border: "none", borderRadius: 10, cursor: !isDirty || isSubmitting ? "not-allowed" : "pointer", fontWeight: 600 }}
           >
             {isSubmitting ? "Guardando..." : "Guardar cambios"}
           </button>

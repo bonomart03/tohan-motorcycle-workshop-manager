@@ -56,7 +56,7 @@ export default function ClienteDetailPage() {
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.75rem", flexWrap: "wrap" }}>
         <button
           onClick={() => navigate("/clientes")}
-          style={{ padding: "0.4rem 0.8rem", border: "1px solid #ccc", borderRadius: 4, background: "#fff", cursor: "pointer", fontSize: "0.9rem" }}
+          style={{ padding: "0.4rem 0.8rem", border: "1px solid #ccc", borderRadius: 8, background: "#fff", cursor: "pointer", fontSize: "0.9rem" }}
         >
           ← Volver
         </button>
@@ -69,7 +69,7 @@ export default function ClienteDetailPage() {
       </div>
 
       {/* Info cliente */}
-      <div style={{ background: "#fff", borderRadius: 6, padding: "1.25rem 1.5rem", marginBottom: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,0.07)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem 2rem" }}>
+      <div style={{ background: "#fff", borderRadius: 14, padding: "1.25rem 1.5rem", marginBottom: "1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem 2rem" }}>
         <div>
           <span style={{ fontSize: "0.78rem", color: "#888", textTransform: "uppercase", letterSpacing: 0.5 }}>DNI</span>
           <p style={{ margin: "0.1rem 0 0", fontFamily: "monospace", fontWeight: 600 }}>{cliente.dni}</p>
@@ -86,13 +86,13 @@ export default function ClienteDetailPage() {
         )}
         <div>
           <span style={{ fontSize: "0.78rem", color: "#888", textTransform: "uppercase", letterSpacing: 0.5 }}>Vehículos</span>
-          <p style={{ margin: "0.1rem 0 0", fontWeight: 600, color: "#2980b9" }}>{cliente.vehiculos?.length ?? 0}</p>
+          <p style={{ margin: "0.1rem 0 0", fontWeight: 600, color: "#000" }}>{cliente.vehiculos?.length ?? 0}</p>
         </div>
       </div>
 
       {/* Sin vehículos */}
       {(!cliente.vehiculos || cliente.vehiculos.length === 0) && (
-        <div style={{ background: "#fff", borderRadius: 6, padding: "2rem", textAlign: "center", color: "#888", boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+        <div style={{ background: "#fff", borderRadius: 14, padding: "2rem", textAlign: "center", color: "#888", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
           Este cliente no tiene vehículos registrados.
         </div>
       )}
@@ -101,7 +101,7 @@ export default function ClienteDetailPage() {
       {cliente.vehiculos?.map((v) => (
         <div
           key={v.id}
-          style={{ background: "#fff", borderRadius: 6, marginBottom: "1.25rem", boxShadow: "0 1px 4px rgba(0,0,0,0.07)", overflow: "hidden" }}
+          style={{ background: "#fff", borderRadius: 14, marginBottom: "1.25rem", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)", overflow: "hidden" }}
         >
           {/* Encabezado vehículo */}
           <div style={{ padding: "1rem 1.5rem", borderBottom: "1px solid #f0f0f0", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
@@ -114,7 +114,7 @@ export default function ClienteDetailPage() {
               {v.nroCuadro && <span>Cuadro: <strong style={{ color: "#444" }}>{v.nroCuadro}</strong></span>}
               <span>KM: <strong style={{ color: "#444" }}>{v.kilometraje.toLocaleString("es-AR")}</strong></span>
             </div>
-            <span style={{ background: "#e8f4fd", color: "#2980b9", padding: "0.2rem 0.6rem", borderRadius: 12, fontSize: "0.82rem", fontWeight: 600 }}>
+            <span style={{ background: "#f0f0f0", color: "#333", padding: "0.2rem 0.6rem", borderRadius: 12, fontSize: "0.82rem", fontWeight: 600 }}>
               {v.servicios?.length ?? 0} servicio{(v.servicios?.length ?? 0) !== 1 ? "s" : ""}
             </span>
           </div>
@@ -162,7 +162,7 @@ export default function ClienteDetailPage() {
                       <td style={{ padding: "0.65rem 1rem" }}>
                         <Link
                           to={`/servicios/${s.id}`}
-                          style={{ color: "#2980b9", fontSize: "0.82rem", textDecoration: "none", border: "1px solid #2980b9", padding: "0.2rem 0.55rem", borderRadius: 4 }}
+                          style={{ color: "#444", fontSize: "0.82rem", textDecoration: "none", border: "1px solid #ccc", padding: "0.2rem 0.55rem", borderRadius: 8 }}
                         >
                           Ver
                         </Link>

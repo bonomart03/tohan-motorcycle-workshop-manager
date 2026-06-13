@@ -102,7 +102,7 @@ export default function ClientesPage() {
         <h2 style={{ margin: 0 }}>Clientes</h2>
         <button
           onClick={openCreate}
-          style={{ padding: "0.6rem 1.2rem", background: "#2980b9", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: 500 }}
+          className="btn-primary"
         >
           + Nuevo cliente
         </button>
@@ -114,12 +114,12 @@ export default function ClientesPage() {
         placeholder="Buscar por nombre, apellido o DNI..."
         value={search}
         onChange={(e) => handleSearch(e.target.value)}
-        style={{ padding: "0.6rem 0.75rem", border: "1px solid #ccc", borderRadius: 4, width: "100%", maxWidth: 360, marginBottom: "1rem", fontSize: "0.95rem" }}
+        className="search-input"
       />
 
       {/* Error de mutación */}
       {mutationError && (
-        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 4, marginBottom: "1rem" }}>
+        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 10, marginBottom: "1rem" }}>
           {(mutationError as any)?.response?.data?.message ?? "Ocurrió un error."}
         </div>
       )}
@@ -129,7 +129,7 @@ export default function ClientesPage() {
 
       {!isLoading && (
         <>
-          <div className="table-scroll" style={{ background: "#fff", borderRadius: 6, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+          <div className="table-scroll" style={{ background: "#fff", borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f8f9fa" }}>
@@ -156,20 +156,20 @@ export default function ClientesPage() {
                     <td style={{ padding: "0.75rem 1rem", fontFamily: "monospace" }}>{c.dni}</td>
                     <td style={{ padding: "0.75rem 1rem", color: "#555" }}>{c.domicilio}</td>
                     <td style={{ padding: "0.75rem 1rem", textAlign: "center" }}>
-                      <span style={{ background: "#e8f4fd", color: "#2980b9", padding: "0.15rem 0.5rem", borderRadius: 12, fontSize: "0.85rem", fontWeight: 600 }}>
+                      <span style={{ background: "#f0f0f0", color: "#333", padding: "0.15rem 0.5rem", borderRadius: 12, fontSize: "0.85rem", fontWeight: 600 }}>
                         {c.vehiculos?.length ?? 0}
                       </span>
                     </td>
                     <td style={{ padding: "0.75rem 1rem" }}>
                       <button
                         onClick={() => openEdit(c)}
-                        style={{ marginRight: 8, padding: "0.3rem 0.7rem", border: "1px solid #2980b9", borderRadius: 4, color: "#2980b9", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                        style={{ marginRight: 8, padding: "0.3rem 0.7rem", border: "1px solid #ccc", borderRadius: 8, color: "#444", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => setDeletingId(c.id)}
-                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #c0392b", borderRadius: 4, color: "#c0392b", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #e0b0b0", borderRadius: 8, color: "#c0392b", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                       >
                         Eliminar
                       </button>
@@ -177,7 +177,7 @@ export default function ClientesPage() {
                     <td style={{ padding: "0.75rem 1rem" }}>
                       <button
                         onClick={() => navigate(`/clientes/${c.id}`)}
-                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #27ae60", borderRadius: 4, color: "#27ae60", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #ccc", borderRadius: 8, color: "#444", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                       >
                         Historial
                       </button>

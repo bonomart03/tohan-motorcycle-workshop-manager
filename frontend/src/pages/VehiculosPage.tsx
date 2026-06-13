@@ -80,14 +80,14 @@ export default function VehiculosPage() {
         <h2 style={{ margin: 0 }}>Vehículos</h2>
         <button
           onClick={openCreate}
-          style={{ padding: "0.6rem 1.2rem", background: "#2980b9", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: 500 }}
+          className="btn-primary"
         >
           + Registrar vehículo
         </button>
       </div>
 
       {mutationError && (
-        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 4, marginBottom: "1rem" }}>
+        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 10, marginBottom: "1rem" }}>
           {(mutationError as any)?.response?.data?.message ?? "Ocurrió un error."}
         </div>
       )}
@@ -97,7 +97,7 @@ export default function VehiculosPage() {
 
       {!isLoading && (
         <>
-          <div className="table-scroll" style={{ background: "#fff", borderRadius: 6, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+          <div className="table-scroll" style={{ background: "#fff", borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f8f9fa" }}>
@@ -141,13 +141,13 @@ export default function VehiculosPage() {
                     <td style={{ padding: "0.75rem 1rem" }}>
                       <button
                         onClick={() => navigate(`/servicios?vehiculoId=${v.id}`)}
-                        style={{ marginRight: 8, padding: "0.3rem 0.7rem", border: "1px solid #27ae60", borderRadius: 4, color: "#27ae60", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                        style={{ marginRight: 8, padding: "0.3rem 0.7rem", border: "1px solid #ccc", borderRadius: 8, color: "#444", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                       >
                         Servicios
                       </button>
                       <button
                         onClick={() => openEdit(v)}
-                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #2980b9", borderRadius: 4, color: "#2980b9", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                        style={{ padding: "0.3rem 0.7rem", border: "1px solid #ccc", borderRadius: 8, color: "#444", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                       >
                         Editar
                       </button>

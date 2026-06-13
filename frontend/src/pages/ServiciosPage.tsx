@@ -69,7 +69,7 @@ export default function ServiciosPage() {
         <h2 style={{ margin: 0 }}>Servicios</h2>
         <button
           onClick={() => setModalOpen(true)}
-          style={{ padding: "0.6rem 1.2rem", background: "#27ae60", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: 500 }}
+          className="btn-primary"
         >
           + Registrar ingreso
         </button>
@@ -81,7 +81,7 @@ export default function ServiciosPage() {
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           <button
             onClick={() => { setEstadoFiltro(undefined); goToPage(1); }}
-            style={{ padding: "0.4rem 0.9rem", background: !estadoFiltro ? "#1a1a2e" : "#eee", color: !estadoFiltro ? "#fff" : "#444", border: "none", borderRadius: 20, cursor: "pointer", fontSize: "0.85rem", fontWeight: !estadoFiltro ? 600 : 400 }}
+            style={{ padding: "0.4rem 0.9rem", background: !estadoFiltro ? "#0e1311" : "#eee", color: !estadoFiltro ? "#fff" : "#444", border: "none", borderRadius: 20, cursor: "pointer", fontSize: "0.85rem", fontWeight: !estadoFiltro ? 600 : 400 }}
           >
             Todos {!estadoFiltro && meta ? `(${meta.total})` : ""}
           </button>
@@ -127,14 +127,14 @@ export default function ServiciosPage() {
       </div>
 
       {createMutation.error && (
-        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 4, marginBottom: "1rem" }}>
+        <div style={{ background: "#fde8e8", color: "#c0392b", padding: "0.75rem 1rem", borderRadius: 10, marginBottom: "1rem" }}>
           {(createMutation.error as any)?.response?.data?.message ?? "Ocurrió un error."}
         </div>
       )}
 
       {isLoading && <p style={{ color: "#888" }}>Cargando servicios...</p>}
 
-      <div className="table-scroll" style={{ background: "#fff", borderRadius: 6, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+      <div className="table-scroll" style={{ background: "#fff", borderRadius: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#f8f9fa" }}>
@@ -190,7 +190,7 @@ export default function ServiciosPage() {
                 <td style={{ padding: "0.75rem 1rem" }} onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => navigate(`/servicios/${s.id}`)}
-                    style={{ padding: "0.3rem 0.7rem", border: "1px solid #2980b9", borderRadius: 4, color: "#2980b9", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
+                    style={{ padding: "0.3rem 0.7rem", border: "1px solid #ccc", borderRadius: 8, color: "#444", background: "#fff", cursor: "pointer", fontSize: "0.85rem" }}
                   >
                     Ver detalle
                   </button>
