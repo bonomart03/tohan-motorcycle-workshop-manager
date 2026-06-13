@@ -101,11 +101,11 @@ export const Sidebar = React.memo(function Sidebar({ isOpen, onClose }: SidebarP
     >
       {/* Logo */}
       <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid #2a2a4a" }}>
-        <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
+        <h1 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600, color: "#fff", fontFamily: "'Schibsted Grotesk', sans-serif", letterSpacing: "-0.5px" }}>
           Taller Tohan
         </h1>
         {user && (
-          <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: "#7f8c8d" }}>
+          <p style={{ margin: "0.4rem 0 0", fontSize: "0.78rem", color: "#7f8c8d", fontFamily: "'Schibsted Grotesk', sans-serif" }}>
             {user.nombre} · {user.rol}
           </p>
         )}
