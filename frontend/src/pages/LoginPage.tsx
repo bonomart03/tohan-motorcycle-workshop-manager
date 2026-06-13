@@ -4,89 +4,188 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "../hooks/useAuth";
 
-const VIDEO_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4";
-const FADE_MS   = 250;
-const FADE_TRIG = 0.55;
-
 const loginSchema = z.object({
   email:    z.string().email("Email inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 type LoginForm = z.infer<typeof loginSchema>;
 
-// ─── Video background ──────────────────────────────────────────────────────────
-function VideoBackground() {
-  const videoRef    = useRef<HTMLVideoElement>(null);
-  const rafRef      = useRef<number>(0);
-  const fadingOut   = useRef(false);
-
-  const cancel = useCallback(() => cancelAnimationFrame(rafRef.current), []);
-
-  const fadeIn = useCallback(() => {
-    const v = videoRef.current; if (!v) return;
-    cancel(); fadingOut.current = false;
-    const from = parseFloat(v.style.opacity || "0");
-    const t0   = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - t0) / FADE_MS, 1);
-      v.style.opacity = String(from + (1 - from) * p);
-      if (p < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, [cancel]);
-
-  const fadeOut = useCallback((cb?: () => void) => {
-    const v = videoRef.current; if (!v) return;
-    cancel(); fadingOut.current = true;
-    const from = parseFloat(v.style.opacity || "1");
-    const t0   = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - t0) / FADE_MS, 1);
-      v.style.opacity = String(from * (1 - p));
-      if (p < 1) { rafRef.current = requestAnimationFrame(tick); } else { cb?.(); }
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, [cancel]);
+// ─── Road animation ────────────────────────────────────────────────────────────
+function AnimatedBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef    = useRef<number>(0);
 
   useEffect(() => {
-    const v = videoRef.current; if (!v) return;
-    v.style.opacity = "0";
-    const onCan  = () => fadeIn();
-    const onTime = () => {
-      if (!v.duration || fadingOut.current) return;
-      if (v.duration - v.currentTime <= FADE_TRIG) fadeOut();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
+
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
-    const onEnd  = () => {
-      v.style.opacity = "0"; fadingOut.current = false;
-      setTimeout(() => { v.currentTime = 0; v.play().then(() => fadeIn()).catch(() => {}); }, 100);
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Stars (fixed ratio positions so they scale on resize)
+    const STARS = Array.from({ length: 140 }, () => ({
+      x: Math.random(), y: Math.random() * 0.38,
+      r: Math.random() * 1.1 + 0.2,
+      a: Math.random() * 0.55 + 0.1,
+    }));
+
+    // Center dashes — t: 0 = vanishing point, 1 = bottom
+    const DASH_COUNT = 16;
+    const dashT = Array.from({ length: DASH_COUNT }, (_, i) => i / DASH_COUNT);
+
+    const SPEED = 0.007;
+    let lastTime = 0;
+
+    const draw = (now: number) => {
+      const dt = Math.min((now - lastTime) / 16.67, 3);
+      lastTime = now;
+
+      const W  = canvas.width;
+      const H  = canvas.height;
+      const vpX = W / 2;
+      const vpY = H * 0.36;
+      const halfTop = 22;
+      const halfBot = W * 0.44;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // ── Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, vpY + 8);
+      sky.addColorStop(0,   "#03030b");
+      sky.addColorStop(0.7, "#07071a");
+      sky.addColorStop(1,   "#0d0d20");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, vpY + 8);
+
+      // ── Ground (off-road)
+      const gnd = ctx.createLinearGradient(0, vpY, 0, H);
+      gnd.addColorStop(0, "#040404");
+      gnd.addColorStop(1, "#0b0b0b");
+      ctx.fillStyle = gnd;
+      ctx.fillRect(0, vpY, W, H - vpY);
+
+      // ── Stars
+      for (const s of STARS) {
+        ctx.beginPath();
+        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+        ctx.fill();
+      }
+
+      // ── Horizon city-glow (warm amber)
+      const hg = ctx.createRadialGradient(vpX, vpY, 0, vpX, vpY, W * 0.55);
+      hg.addColorStop(0,   "rgba(255,140,30,0.22)");
+      hg.addColorStop(0.35,"rgba(255,100,20,0.07)");
+      hg.addColorStop(1,   "rgba(0,0,0,0)");
+      ctx.fillStyle = hg;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Road fill
+      ctx.beginPath();
+      ctx.moveTo(vpX - halfTop, vpY);
+      ctx.lineTo(vpX + halfTop, vpY);
+      ctx.lineTo(vpX + halfBot, H);
+      ctx.lineTo(vpX - halfBot, H);
+      ctx.closePath();
+      const rg = ctx.createLinearGradient(0, vpY, 0, H);
+      rg.addColorStop(0,   "#0c0c0c");
+      rg.addColorStop(0.5, "#141414");
+      rg.addColorStop(1,   "#1a1a1a");
+      ctx.fillStyle = rg;
+      ctx.fill();
+
+      // ── Headlight cone (clipped to road)
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(vpX - halfTop, vpY);
+      ctx.lineTo(vpX + halfTop, vpY);
+      ctx.lineTo(vpX + halfBot, H);
+      ctx.lineTo(vpX - halfBot, H);
+      ctx.closePath();
+      ctx.clip();
+      const hl = ctx.createRadialGradient(vpX, H * 1.15, 0, vpX, H * 0.5, H * 0.82);
+      hl.addColorStop(0,   "rgba(255,248,200,0.14)");
+      hl.addColorStop(0.4, "rgba(255,240,180,0.04)");
+      hl.addColorStop(1,   "rgba(0,0,0,0)");
+      ctx.fillStyle = hl;
+      ctx.fillRect(vpX - halfBot, vpY, halfBot * 2, H - vpY);
+      ctx.restore();
+
+      // ── Road edge lines
+      ctx.save();
+      ctx.shadowBlur  = 8;
+      ctx.shadowColor = "rgba(255,255,255,0.35)";
+      ctx.strokeStyle = "rgba(255,255,255,0.55)";
+      ctx.lineWidth   = 2;
+      ctx.beginPath(); ctx.moveTo(vpX - halfTop, vpY); ctx.lineTo(vpX - halfBot, H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(vpX + halfTop, vpY); ctx.lineTo(vpX + halfBot, H); ctx.stroke();
+      ctx.restore();
+
+      // ── Shoulder lines (yellow, farther out)
+      const shoulderOffset = 0.12;
+      const sTopOff  = halfTop  * (1 + shoulderOffset * 8);
+      const sBotOff  = halfBot  * (1 + shoulderOffset);
+      ctx.strokeStyle = "rgba(255,200,60,0.18)";
+      ctx.lineWidth   = 1.5;
+      ctx.beginPath(); ctx.moveTo(vpX - sTopOff, vpY); ctx.lineTo(vpX - sBotOff, H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(vpX + sTopOff, vpY); ctx.lineTo(vpX + sBotOff, H); ctx.stroke();
+
+      // ── Update dashes
+      for (let i = 0; i < dashT.length; i++) {
+        dashT[i] += SPEED * dt * (0.06 + dashT[i] * dashT[i] * 2.8);
+        if (dashT[i] > 1.06) dashT[i] -= 1.06;
+      }
+
+      // ── Draw dashes
+      for (const t of dashT) {
+        if (t < 0.02) continue;
+        const y     = vpY + (H - vpY) * t;
+        const half  = halfTop + (halfBot - halfTop) * t;
+        const dashW = Math.max(2, half * 0.065);
+        const dashH = Math.max(2, half * 0.09);
+        const alpha = Math.min(1, t * 1.6) * 0.88;
+        ctx.fillStyle = `rgba(255,248,140,${alpha})`;
+        ctx.fillRect(vpX - dashW / 2, y - dashH / 2, dashW, dashH);
+      }
+
+      // ── Subtle speed lines from vanishing point
+      for (let i = 0; i < 20; i++) {
+        const angle = (i / 20) * Math.PI * 2;
+        const dist  = W * 0.7;
+        const x2    = vpX + Math.cos(angle) * dist;
+        const y2    = vpY + Math.sin(angle) * dist;
+        const grad  = ctx.createLinearGradient(vpX, vpY, x2, y2);
+        grad.addColorStop(0, "rgba(255,255,255,0.025)");
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        ctx.moveTo(vpX, vpY);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
     };
-    v.addEventListener("canplay",    onCan);
-    v.addEventListener("timeupdate", onTime);
-    v.addEventListener("ended",      onEnd);
+
+    rafRef.current = requestAnimationFrame(draw);
+
     return () => {
-      v.removeEventListener("canplay",    onCan);
-      v.removeEventListener("timeupdate", onTime);
-      v.removeEventListener("ended",      onEnd);
-      cancel();
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", resize);
     };
-  }, [fadeIn, fadeOut, cancel]);
+  }, []);
 
   return (
-    <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-      <video
-        ref={videoRef}
-        src={VIDEO_URL}
-        autoPlay muted playsInline
-        style={{
-          position: "absolute", top: 0, left: "50%",
-          transform: "translateX(-50%)",
-          width: "115%", height: "115%",
-          objectFit: "cover", objectPosition: "top center",
-          opacity: 0,
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+    />
   );
 }
 
@@ -98,7 +197,7 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = useCallback(async (data: LoginForm) => {
     setServerError(null);
     try {
       await login(data.email, data.password);
@@ -107,43 +206,39 @@ export default function LoginPage() {
         ?.response?.data?.message;
       setServerError(msg ?? "Credenciales inválidas.");
     }
-  };
+  }, [login]);
 
   return (
     <div style={{
       position: "relative", width: "100%", minHeight: "100vh",
-      overflow: "hidden", background: "#f8f8f8",
+      overflow: "hidden", background: "#03030b",
     }}>
-      <VideoBackground />
+      <AnimatedBackground />
 
       <div style={{
         position: "relative", zIndex: 1,
         display: "flex", flexDirection: "column", minHeight: "100vh",
       }}>
-        {/* ── Navbar ─────────────────────────────────────────────────────────── */}
+        {/* ── Navbar */}
         <nav style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "16px 120px",
         }}>
-          <img
-            src="/logo.jpeg"
-            alt="Taller Tohan"
-            style={{ height: 48, mixBlendMode: "screen" }}
-          />
+          <img src="/logo.jpeg" alt="Taller Tohan" style={{ height: 48, mixBlendMode: "screen" }} />
           <span style={{
             fontFamily: "'Schibsted Grotesk', sans-serif",
-            fontSize: 13, color: "rgba(0,0,0,0.4)", fontWeight: 500,
+            fontSize: 13, color: "rgba(255,255,255,0.35)", fontWeight: 500,
           }}>
             Sistema de gestión
           </span>
         </nav>
 
-        {/* ── Hero content ───────────────────────────────────────────────────── */}
+        {/* ── Hero content */}
         <div style={{
           flex: 1, display: "flex", flexDirection: "column",
           alignItems: "center", marginTop: 10, padding: "0 20px",
         }}>
-          {/* Header group */}
+          {/* Badge + title */}
           <div style={{
             display: "flex", flexDirection: "column",
             alignItems: "center", gap: 34, marginBottom: 44,
@@ -152,43 +247,45 @@ export default function LoginPage() {
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "4px 4px 4px 8px", borderRadius: 999,
-              border: "1px solid rgba(0,0,0,0.08)",
-              background: "#fff", boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(255,255,255,0.06)",
+              backdropFilter: "blur(8px)",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.4)",
             }}>
               <div style={{
                 display: "flex", alignItems: "center", gap: 6,
-                padding: "3px 8px", background: "#0e1311",
-                borderRadius: 999, color: "#fff",
+                padding: "3px 8px", background: "#fff",
+                borderRadius: 999, color: "#000",
               }}>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M6 1L7.35 4.65H11L8.1 6.85L9.18 10.5L6 8.4L2.82 10.5L3.9 6.85L1 4.65H4.65L6 1Z" fill="white"/>
+                  <path d="M6 1L7.35 4.65H11L8.1 6.85L9.18 10.5L6 8.4L2.82 10.5L3.9 6.85L1 4.65H4.65L6 1Z" fill="#000"/>
                 </svg>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 500 }}>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600 }}>
                   Bienvenido Iancito Tohan
                 </span>
               </div>
               <span style={{
                 fontFamily: "'Inter', sans-serif", fontSize: 14,
-                fontWeight: 400, color: "#000", paddingRight: 8,
+                fontWeight: 400, color: "rgba(255,255,255,0.7)", paddingRight: 8,
               }}>
                 Iniciá sesión para continuar
               </span>
             </div>
 
             {/* Title + subtitle */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 34 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
               <h1 style={{
                 fontFamily: "'Fustat', sans-serif",
                 fontSize: "clamp(42px, 7vw, 80px)", fontWeight: 700,
                 letterSpacing: "-4.8px", lineHeight: 1,
-                color: "#000", textAlign: "center", margin: 0,
+                color: "#fff", textAlign: "center", margin: 0,
               }}>
                 Taller Tohan
               </h1>
               <p style={{
                 fontFamily: "'Fustat', sans-serif",
                 fontSize: 20, fontWeight: 500,
-                letterSpacing: "-0.4px", color: "#505050",
+                letterSpacing: "-0.4px", color: "rgba(255,255,255,0.55)",
                 maxWidth: 542, textAlign: "center",
                 margin: 0, lineHeight: 1.5,
               }}>
@@ -197,21 +294,20 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* ── Login form ─────────────────────────────────────────────────────── */}
+          {/* ── Login form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
             noValidate
             style={{
               maxWidth: 480, width: "100%",
-              background: "rgba(0,0,0,0.24)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
+              background: "rgba(0,0,0,0.55)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
               borderRadius: 18, padding: 12,
               display: "flex", flexDirection: "column", gap: 8,
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            {/* Error */}
             {serverError && (
               <div style={{
                 background: "rgba(192,57,43,0.85)", color: "#fff",
@@ -224,29 +320,23 @@ export default function LoginPage() {
 
             {/* Email */}
             <div style={{
-              background: "#fff", borderRadius: 12,
-              padding: "12px 14px",
+              background: "#fff", borderRadius: 12, padding: "12px 14px",
               display: "flex", flexDirection: "column", gap: 4,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
             }}>
               <label style={{
                 fontFamily: "'Schibsted Grotesk', sans-serif",
-                fontSize: 11, fontWeight: 600,
-                color: "rgba(0,0,0,0.4)",
+                fontSize: 11, fontWeight: 600, color: "rgba(0,0,0,0.4)",
                 textTransform: "uppercase" as const, letterSpacing: 0.5,
-              }}>
-                Email
-              </label>
+              }}>Email</label>
               <input
                 {...register("email")}
-                type="email"
-                autoComplete="email"
+                type="email" autoComplete="email"
                 placeholder="admin@tallertohan.com"
                 style={{
                   border: "none", outline: "none",
                   fontFamily: "'Schibsted Grotesk', sans-serif",
-                  fontSize: 16, color: "#000", background: "transparent",
-                  width: "100%",
+                  fontSize: 16, color: "#000", background: "transparent", width: "100%",
                 }}
               />
               {errors.email && (
@@ -258,29 +348,23 @@ export default function LoginPage() {
 
             {/* Password */}
             <div style={{
-              background: "#fff", borderRadius: 12,
-              padding: "12px 14px",
+              background: "#fff", borderRadius: 12, padding: "12px 14px",
               display: "flex", flexDirection: "column", gap: 4,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
             }}>
               <label style={{
                 fontFamily: "'Schibsted Grotesk', sans-serif",
-                fontSize: 11, fontWeight: 600,
-                color: "rgba(0,0,0,0.4)",
+                fontSize: 11, fontWeight: 600, color: "rgba(0,0,0,0.4)",
                 textTransform: "uppercase" as const, letterSpacing: 0.5,
-              }}>
-                Contraseña
-              </label>
+              }}>Contraseña</label>
               <input
                 {...register("password")}
-                type="password"
-                autoComplete="current-password"
+                type="password" autoComplete="current-password"
                 placeholder="••••••••"
                 style={{
                   border: "none", outline: "none",
                   fontFamily: "'Schibsted Grotesk', sans-serif",
-                  fontSize: 16, color: "#000", background: "transparent",
-                  width: "100%",
+                  fontSize: 16, color: "#000", background: "transparent", width: "100%",
                 }}
               />
               {errors.password && (
@@ -296,10 +380,11 @@ export default function LoginPage() {
               disabled={isSubmitting}
               style={{
                 width: "100%", padding: "14px",
-                background: isSubmitting ? "rgba(255,255,255,0.25)" : "#000",
-                color: "#fff", border: "none", borderRadius: 12,
+                background: isSubmitting ? "rgba(255,255,255,0.15)" : "#fff",
+                color: isSubmitting ? "rgba(255,255,255,0.5)" : "#000",
+                border: "none", borderRadius: 12,
                 fontFamily: "'Schibsted Grotesk', sans-serif",
-                fontSize: 16, fontWeight: 600,
+                fontSize: 16, fontWeight: 700,
                 cursor: isSubmitting ? "not-allowed" : "pointer",
               }}
             >
@@ -308,17 +393,17 @@ export default function LoginPage() {
           </form>
         </div>
 
-        {/* ── Footer ─────────────────────────────────────────────────────────── */}
+        {/* ── Footer */}
         <div style={{
           padding: "1.5rem", textAlign: "center",
           fontFamily: "'Schibsted Grotesk', sans-serif",
-          fontSize: 12, color: "rgba(0,0,0,0.35)",
+          fontSize: 12, color: "rgba(255,255,255,0.25)",
         }}>
           Developed by{" "}
           <a
             href="https://www.linkedin.com/in/bono-martinez-8b638227a"
             target="_blank" rel="noopener noreferrer"
-            style={{ color: "rgba(0,0,0,0.5)", textDecoration: "none", fontWeight: 600 }}
+            style={{ color: "rgba(255,255,255,0.45)", textDecoration: "none", fontWeight: 600 }}
           >
             Bonomart
           </a>
